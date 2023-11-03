@@ -14,7 +14,7 @@
 # include <sys/ioctl.h>
 # include <net/if.h>
 # include <netinet/in.h>
-# include <arpa/inet.h>
+# include <signal.h>
 # include "colors.h"
 #include "libft.h"
 
