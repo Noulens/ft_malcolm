@@ -16,6 +16,8 @@
 # include <netinet/in.h>
 # include <signal.h>
 # include "colors.h"
-#include "libft.h"
+# include "libft.h"
+
+extern int  g_status;
 
 #endif //FT_MALCOLM_MALCOLM_H

@@ -4,6 +4,8 @@
 
 #include "malcolm.h"
 
+int g_status;
+
 void	tmp_handler(int sig, siginfo_t *info, void *context)
 {
 	(void)info;
@@ -27,6 +29,8 @@ void	signal_handling()
 
 int main(int argc, char **argv)
 {
+	g_status = -1;
+
 	signal_handling();
 	if (argc != 5)
 	{
@@ -36,7 +40,7 @@ int main(int argc, char **argv)
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{
-		;
+		printf("ARP request received %d\n", g_status);
 	}
 	return (0);
 }
