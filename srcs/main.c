@@ -12,7 +12,7 @@ void	tmp_handler(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == SIGINT)
 	{
-		printf(YELLOW"SIGINT received\n"RESET);
+		fprintf(stderr, YELLOW"SIGINT received\n"RESET);
 		exit(128 + SIGINT);
 	}
 }
@@ -32,15 +32,12 @@ int main(int argc, char **argv)
 	g_status = -1;
 
 	signal_handling();
-	if (argc != 5)
-	{
-		fprintf(stderr, RED"Usage: %s <source ip> <source MAC addr> <target ip> <target MAC addr>\n"RESET, argv[0]);
-		exit(EXIT_FAILURE);
-	}
+    init_checks(argc, argv);
+    printf("Source UID is: %d\n", getuid());
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{
-		printf("ARP request received %d\n", g_status);
+		sleep(1000);
 	}
 	return (0);
 }
