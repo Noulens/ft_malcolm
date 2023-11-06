@@ -33,7 +33,6 @@ int main(int argc, char **argv)
 
 	signal_handling();
     init_checks(argc, argv);
-    printf("Source UID is: %d\n", getuid());
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{

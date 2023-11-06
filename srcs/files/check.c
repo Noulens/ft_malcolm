@@ -86,25 +86,26 @@ void    init_checks(int argc, char **argv)
 		fprintf(stderr, RED"Usage: %s <source ip> <source MAC addr> <target ip> <target MAC addr>\n"RESET, argv[0]);
 		exit(EXIT_FAILURE);
     }
-    // Check if the user gave a valid IP addresses and valid MAC addresses
+    // Check if the user gave valid IP addresses
     if (!is_valid_ip(argv[1]))
     {
-		fprintf(stderr, RED"Error: Invalid source IP address\n"RESET);
+		fprintf(stderr, RED"Error: Invalid source IP address: %s\n"RESET, argv[1]);
 		exit(EXIT_FAILURE);
     }
     if (!is_valid_ip(argv[3]))
     {
-		fprintf(stderr, RED"Error: Invalid target IP address\n"RESET);
+		fprintf(stderr, RED"Error: Invalid target IP address: %s\n"RESET, argv[3]);
 		exit(EXIT_FAILURE);
     }
+	// Check if the user gave valid MAC addresses
 	if (!is_valid_mac(argv[2]))
 	{
-		fprintf(stderr, RED"Error: Invalid source MAC address\n"RESET);
+		fprintf(stderr, RED"Error: Invalid source MAC address: %s\n"RESET, argv[2]);
 		exit(EXIT_FAILURE);
 	}
 	if (!is_valid_mac(argv[4]))
 	{
-		fprintf(stderr, RED"Error: Invalid target MAC address\n"RESET);
+		fprintf(stderr, RED"Error: Invalid target MAC address: %s\n"RESET, argv[4]);
 		exit(EXIT_FAILURE);
 	}
 }
