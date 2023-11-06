@@ -23,5 +23,6 @@
 extern int  g_status;
 
 void    init_checks(int, char **);
+int     check_hex(char *);
 
 #endif //FT_MALCOLM_MALCOLM_H

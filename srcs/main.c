@@ -12,7 +12,7 @@ void	tmp_handler(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == SIGINT)
 	{
-		fprintf(stderr, YELLOW"SIGINT received\n"RESET);
+		fprintf(stderr, YELLOW"\nSIGINT received\n"RESET);
 		exit(128 + SIGINT);
 	}
 }
