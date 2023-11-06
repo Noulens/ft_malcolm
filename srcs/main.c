@@ -12,6 +12,8 @@ void	tmp_handler(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == SIGINT)
 	{
+		if (g_status != -1 && close(g_status) == -1)
+			fprintf(stderr, RED"\nError: close() failed: %s\n"RESET, strerror(errno));
 		fprintf(stderr, YELLOW"\nSIGINT received\n"RESET);
 		exit(128 + SIGINT);
 	}
@@ -36,6 +38,8 @@ int main(int argc, char **argv)
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{
+		parse(argv);
+		poison();
 		sleep(1000);
 	}
 	return (0);
