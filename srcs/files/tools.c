@@ -6,9 +6,9 @@
 
 int check_hex(char *tmp)
 {
-	int hex_value = -1;
-	int i = 0;
-	char *chunk;
+	int     hex_value = -1;
+	int     i = 0;
+	char    *chunk;
 
 	while (tmp[i] != ':' && tmp[i] != '\0')
 	{

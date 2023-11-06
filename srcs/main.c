@@ -31,15 +31,16 @@ void	signal_handling()
 
 int main(int argc, char **argv)
 {
-	g_status = -1;
+	void    *data;
 
+	g_status = -1;
 	signal_handling();
     init_checks(argc, argv);
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{
-		parse(argv);
-		poison();
+		data = parse(argv);
+		poison(data);
 		sleep(1000);
 	}
 	return (0);

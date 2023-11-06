@@ -25,7 +25,7 @@ extern int  g_status;
 
 void    init_checks(int, char **);
 int     check_hex(char *);
-void	parse(char **);
-void	poison(void);
+void	*parse(char **);
+void	poison(void *);
 
 #endif //FT_MALCOLM_MALCOLM_H

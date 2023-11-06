@@ -16,7 +16,7 @@
 # define DECIMAL "0123456789"
 # define HEX "0123456789abcdef"
 # define BINARY "01"
-# define OCT "012345678"
+# define OCT "01234567"
 # define TRUE 1
 # define FALSE 0
 
