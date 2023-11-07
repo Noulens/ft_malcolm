@@ -16,10 +16,13 @@
 # include <netinet/in.h>
 # include <netdb.h>
 # include <ifaddrs.h>
+# include <linux/if_ether.h>
 # include <signal.h>
 # include <errno.h>
 # include "colors.h"
 # include "libft.h"
+
+# include <sys/ioctl.h>
 
 extern int  g_status;
 
@@ -28,5 +31,10 @@ int     check_hex(char *);
 void	*parse(char **);
 void	poison(void *);
 void    welcome();
+void    error(const char *, int);
 
+/*
+ * BONUS
+ */
+/*char    *getMacAddress(const char *, int);*/
 #endif //FT_MALCOLM_MALCOLM_H

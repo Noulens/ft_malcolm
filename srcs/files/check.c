@@ -72,38 +72,22 @@ static int is_valid_mac(char *mac)
 
 void    init_checks(int argc, char **argv)
 {
+	// Init the global variable
+	g_status = -1;
 	// Check if the user is root
 	if (getuid() != 0)
-	{
-		fprintf(stderr, RED"Error: You must be root to run this program\n"RESET);
-		exit(EXIT_FAILURE);
-	}
+		error("You must be root to run this program", -1);
     // Check if the user gave the right number of arguments
     if ((argc != 5 && argc != 6) || (argc == 6 && ft_strcmp(argv[5], "--verbose") != 0))
-    {
-		fprintf(stderr, RED"Usage: %s <source ip> <source MAC addr> <target ip> <target MAC addr>\n"RESET, argv[0]);
-		exit(EXIT_FAILURE);
-    }
+	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1);
     // Check if the user gave valid IP addresses
     if (!is_valid_ip(argv[1]))
-    {
-		fprintf(stderr, RED"Error: Invalid source IP address: %s\n"RESET, argv[1]);
-		exit(EXIT_FAILURE);
-    }
+		error("Invalid source IP address", -1);
     if (!is_valid_ip(argv[3]))
-    {
-		fprintf(stderr, RED"Error: Invalid target IP address: %s\n"RESET, argv[3]);
-		exit(EXIT_FAILURE);
-    }
+	    error("Invalid target IP address", -1);
 	// Check if the user gave valid MAC addresses
 	if (!is_valid_mac(argv[2]))
-	{
-		fprintf(stderr, RED"Error: Invalid source MAC address: %s\n"RESET, argv[2]);
-		exit(EXIT_FAILURE);
-	}
+		error("Invalid source MAC address", -1);
 	if (!is_valid_mac(argv[4]))
-	{
-		fprintf(stderr, RED"Error: Invalid target MAC address: %s\n"RESET, argv[4]);
-		exit(EXIT_FAILURE);
-	}
+		error("Invalid target MAC address", -1);
 }

@@ -16,6 +16,7 @@ SRCS		=	$(addprefix srcs/,						\
 										parse.c			\
 										tools.c			\
 										check.c			\
+										error.c			\
 										)				\
 					)
 
