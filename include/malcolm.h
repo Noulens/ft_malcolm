@@ -24,7 +24,7 @@
 
 # include <sys/ioctl.h>
 
-extern int  g_status;
+extern int  g_packet_socket;
 
 void    init_checks(int, char **);
 int     check_hex(char *);

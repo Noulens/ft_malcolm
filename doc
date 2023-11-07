@@ -1,0 +1,86 @@
+inet_pton
+       This  function converts the character string src into a network address
+       structure in the af address family, then  copies  the  network  address
+       structure  to dst.  The af argument must be either AF_INET or AF_INET6.
+       dst is written in network byte order.
+
+inet_ntop
+       This  function converts the network address structure src in the af ad‐
+       dress family into a character string.  The resulting string  is  copied
+       to the buffer pointed to by dst, which must be a non-null pointer.  The
+       caller specifies the number of bytes available in this  buffer  in  the
+       argument size.
+
+if_nametoindex
+       The if_nametoindex() function returns the index of the  network  inter‐
+       face corresponding to the name ifname.
+
+inet_addr
+       The  inet_addr()  function  converts  the Internet host address cp from
+       IPv4 numbers-and-dots notation into binary data in network byte  order.
+       If  the input is invalid, INADDR_NONE (usually -1) is returned.  Use of
+       this  function  is  problematic  because  -1   is   a   valid   address
+       (255.255.255.255).    Avoid   its   use   in   favor   of  inet_aton(),
+       inet_pton(3), or getaddrinfo(3), which provide a cleaner way  to  indi‐
+       cate error return.
+
+gethostbyname
+        Deprecated
+getaddrinfo
+       Given node and service, which identify an Internet host and a  service,
+       getaddrinfo()  returns  one  or more addrinfo structures, each of which
+       contains an Internet address that can be specified in a call to bind(2)
+       or  connect(2).   The getaddrinfo() function combines the functionality
+       provided by the gethostbyname(3) and getservbyname(3) functions into  a
+       single  interface,  but  unlike  the latter functions, getaddrinfo() is
+       reentrant and allows programs to eliminate  IPv4-versus-IPv6  dependen‐
+       cies.
+
+freeaddrinfo
+getifaddrs
+       The  getifaddrs() function creates a linked list of structures describ‐
+       ing the network interfaces of the local system, and stores the  address
+       of  the  first item of the list in *ifap.  The list consists of ifaddrs
+       structures, defined as follows:
+
+           struct ifaddrs {
+               struct ifaddrs  *ifa_next;    /* Next item in list */
+               char            *ifa_name;    /* Name of interface */
+               unsigned int     ifa_flags;   /* Flags from SIOCGIFFLAGS */
+               struct sockaddr *ifa_addr;    /* Address of interface */
+               struct sockaddr *ifa_netmask; /* Netmask of interface */
+               union {
+                   struct sockaddr *ifu_broadaddr;
+                                    /* Broadcast address of interface */
+                   struct sockaddr *ifu_dstaddr;
+                                    /* Point-to-point destination address */
+               } ifa_ifu;
+           #define              ifa_broadaddr ifa_ifu.ifu_broadaddr
+           #define              ifa_dstaddr   ifa_ifu.ifu_dstaddr
+               void            *ifa_data;    /* Address-specific data */
+           };
+
+       The ifa_next field contains a pointer to  the  next  structure  on  the
+       list, or NULL if this is the last item of the list.
+
+       The ifa_name points to the null-terminated interface name.
+
+freeifaddrs
+
+htons
+       The htons() function converts the unsigned short integer hostshort from
+       host byte order to network byte order.
+ntohs
+       The  ntohs() function converts the unsigned short integer netshort from
+       network byte order to host byte order.
+
+strerror / gai_strerror
+sleep
+getuid
+close
+sigaction
+signal
+sendto
+recvfrom
+socket
+setsockopt

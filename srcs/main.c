@@ -4,7 +4,7 @@
 
 #include "malcolm.h"
 
-int g_status;
+int g_packet_socket = -1;
 
 void	tmp_handler(int sig, siginfo_t *info, void *context)
 {
@@ -12,7 +12,7 @@ void	tmp_handler(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == SIGINT)
 	{
-		if (g_status != -1 && close(g_status) == -1)
+		if (g_packet_socket > -1 && close(g_packet_socket) == -1)
 			error("Error: close() failed: ", errno);
 		fprintf(stdout, YELLOW"\nSIGINT received\n"RESET);
 		exit(128 + SIGINT);
@@ -31,15 +31,18 @@ void	signal_handling()
 
 int main(int argc, char **argv)
 {
-	void    *data;
-	int     sd_socket;
-	char *test;
+	void    *data = NULL;
 
 	welcome();
 	signal_handling();
 	init_checks(argc, argv);
-	sd_socket = socket(AF_PACKET, SOCK_RAW, ETH_P_ARP);
-	if (g_status = sd_socket, sd_socket == -1)
+	/*Packet sockets are used to receive or send raw packets at the
+	device driver (OSI Layer 2) level.  They allow the user to
+	implement protocol modules in user space on top of the physical
+	layer.
+	 When protocol is set to htons(ETH_P_ALL), then all protocols are received.*/
+	g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+	if (g_packet_socket <= -1)
 		error("socket() failed", errno);
 /*	getMacAddress("enp0s3", sd_socket);*/
 	printf("Waiting for ARP request...\n\n");
