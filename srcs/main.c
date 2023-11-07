@@ -36,11 +36,12 @@ int main(int argc, char **argv)
 	welcome();
 	signal_handling();
 	init_checks(argc, argv);
-	/*Packet sockets are used to receive or send raw packets at the
+	/*packet_socket = socket(AF_PACKET, int socket_type, int protocol);
+	Packet sockets are used to receive or send raw packets at the
 	device driver (OSI Layer 2) level.  They allow the user to
 	implement protocol modules in user space on top of the physical
 	layer.
-	 When protocol is set to htons(ETH_P_ALL), then all protocols are received.*/
+	When protocol is set to htons(ETH_P_ALL), then all protocols are received.*/
 	g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 	if (g_packet_socket <= -1)
 		error("socket() failed", errno);

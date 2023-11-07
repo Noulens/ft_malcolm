@@ -72,8 +72,6 @@ static int is_valid_mac(char *mac)
 
 void    init_checks(int argc, char **argv)
 {
-	// Init the global variable
-	g_status = -1;
 	// Check if the user is root
 	if (getuid() != 0)
 		error("You must be root to run this program", -1);
