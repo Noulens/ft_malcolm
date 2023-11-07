@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 {
 	void    *data;
 
+	welcome();
 	g_status = -1;
 	signal_handling();
     init_checks(argc, argv);

@@ -25,7 +25,6 @@ static int is_valid_ip(char *ip)
 	if (dots != 3)
 		return (0);
 	tmp = ip;
-	nb_bits = 0;
 	while (dots-- >= 0)
 	{
 		nb_bits = ft_atoi(tmp);
@@ -59,7 +58,6 @@ static int is_valid_mac(char *mac)
 	if (d_dots != 5)
 		return (0);
 	tmp = mac;
-	nb_bits = 0;
 	while (d_dots-- >= 0)
 	{
 		nb_bits = check_hex(tmp);
