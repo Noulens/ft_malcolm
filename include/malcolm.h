@@ -31,6 +31,32 @@
 
 # include <sys/ioctl.h>
 
+/* Ethernet ARP packet from RFC 826 */
+typedef struct {
+	uint16_t arp_hd;   /* Format of hardware address */
+	uint16_t ptype;   /* Format of protocol address */
+	uint8_t hlen;    /* Length of hardware address */
+	uint8_t plen;    /* Length of protocol address */
+	uint16_t op;    /* ARP opcode (command) */
+	uint8_t sha[ETH_ALEN];  /* Sender hardware address */
+	uint32_t spa;   /* Sender IP address */
+	uint8_t tha[ETH_ALEN];  /* Target hardware address */
+	uint32_t tpa;   /* Target IP address */
+} arp_ether_ipv4;
+
+typedef struct __attribute__((packed)) s_arp_header
+{
+	unsigned short arp_hd;
+	unsigned short arp_pr;
+	unsigned char arp_hdl;
+	unsigned char arp_prl;
+	unsigned short arp_op;
+	unsigned char arp_sha[6];
+	unsigned char arp_spa[4];
+	unsigned char arp_dha[6];
+	unsigned char arp_dpa[4];
+}   t_arp_header;
+
 extern int  g_packet_socket;
 
 void    init_checks(int, char **);

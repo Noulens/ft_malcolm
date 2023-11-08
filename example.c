@@ -35,7 +35,7 @@ struct __attribute__((packed)) arp_header
 	unsigned char arp_spa[4];
 	unsigned char arp_dha[6];
 	unsigned char arp_dpa[4];
-};
+} arp_header;
 int main(void) {
 	buffer = (void*)malloc(BUF_SIZE); /*Buffer for Ethernet Frame*/
 	unsigned char* etherhead = buffer;  /*Pointer to Ethenet Header*/
