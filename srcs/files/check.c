@@ -74,18 +74,23 @@ void    init_checks(int argc, char **argv)
 {
 	// Check if the user is root
 	if (getuid() != 0)
-		error("You must be root to run this program", -1);
+		error("You must be root to run this program", -1, TRUE);
     // Check if the user gave the right number of arguments
-    if ((argc != 5 && argc != 6) || (argc == 6 && ft_strcmp(argv[5], "--verbose") != 0))
-	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1);
+	if (BONUS == TRUE)
+	{
+		if ((argc != 5 && argc != 6) || (argc == 6 && ft_strcmp(argv[5], "--verbose") != 0))
+			error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr> [--verbose]", -1, TRUE);
+	}
+	else if (argc != 5)
+	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1, TRUE);
     // Check if the user gave valid IP addresses
     if (!is_valid_ip(argv[1]))
-		error("Invalid source IP address", -1);
+		error("Invalid source IP address", -1, TRUE);
     if (!is_valid_ip(argv[3]))
-	    error("Invalid target IP address", -1);
+	    error("Invalid target IP address", -1, TRUE);
 	// Check if the user gave valid MAC addresses
 	if (!is_valid_mac(argv[2]))
-		error("Invalid source MAC address", -1);
+		error("Invalid source MAC address", -1, TRUE);
 	if (!is_valid_mac(argv[4]))
-		error("Invalid target MAC address", -1);
+		error("Invalid target MAC address", -1, TRUE);
 }

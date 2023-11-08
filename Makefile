@@ -67,9 +67,19 @@ BODY_WIDTH	=	$(shell printf "$$(($(HEAD_SIZE) - 1))")
 #Rules#
 #######
 
+ifeq (bonus, $(filter bonus,$(MAKECMDGOALS)))
+	DEFINE	=	-D BONUS=1
+else ifeq (rebonus, $(filter rebonus,$(MAKECMDGOALS)))
+	DEFINE	=	-D BONUS=1
+else
+	DEFINE	=	-D BONUS=0
+endif
+
 .PHONY:	all bonus clean fclean re
 
 ##.SILENT:
+
+bonus:			subsystem $(NAME)
 
 all:			subsystem $(NAME)
 
@@ -101,3 +111,6 @@ fclean:			clean
 
 re:				fclean
 				@$(MAKE) -s all
+
+rebonus:		fclean
+				@$(MAKE) -s bonus

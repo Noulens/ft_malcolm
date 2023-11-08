@@ -5,6 +5,13 @@
 #ifndef FT_MALCOLM_MALCOLM_H
 # define FT_MALCOLM_MALCOLM_H
 
+# ifndef BONUS
+#  define BONUS 0
+# endif
+
+# define TRUE 1
+# define FALSE 0
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -31,10 +38,11 @@ int     check_hex(char *);
 void	*parse(char **);
 void	poison(void *);
 void    welcome();
-void    error(const char *, int);
+void    error(const char *, int, int);
 
 /*
  * BONUS
  */
-/*char    *getMacAddress(const char *, int);*/
+char    *getMacAddress(const char *, int);
+
 #endif //FT_MALCOLM_MALCOLM_H

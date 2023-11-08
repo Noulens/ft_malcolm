@@ -4,7 +4,7 @@
 
 #include "malcolm.h"
 
-void    error(const char *msg, int error_code)
+void    error(const char *msg, int error_code, int must_exit)
 {
 	if (error_code != -1)
 	{
@@ -12,7 +12,8 @@ void    error(const char *msg, int error_code)
 	}
 	else
 		fprintf(stderr, RED"Error: %s\n"RESET, msg);
-	if (g_packet_socket > -1 && close(g_packet_socket) == -1)
+	if (g_packet_socket > -1 && close(g_packet_socket) <= -1)
 		fprintf(stderr, "Error: close() failed: %s\n", strerror(errno));
-	exit(EXIT_FAILURE);
+	if (must_exit == TRUE)
+		exit(EXIT_FAILURE);
 }
