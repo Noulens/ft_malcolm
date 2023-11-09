@@ -45,9 +45,8 @@ static int is_valid_ip(char **ip, t_data *data)
 	}
 	else
 	{
-		if (inet_pton(AF_INET, source, &(data->source.sin_addr)) != 1)
-			return (0);
-		if (inet_pton(AF_INET, target, &(data->target.sin_addr)) != 1)
+		if (inet_pton(AF_INET, source, &(data->source.sin_addr)) != 1
+			|| inet_pton(AF_INET, target, &(data->target.sin_addr)) != 1)
 			return (0);
 	}
 	return (1);
