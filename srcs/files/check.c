@@ -15,7 +15,7 @@ static int is_valid_ip(char **ip, t_data *data)
 			char    *test = ft_itoa(ft_atoi(source));
 			if (!ft_strcmp(test, source))
 			{
-				data->source.sin_addr.s_addr = (uint32_t)ft_atoi(source);
+				data->source.sin_addr.s_addr = htonl((uint32_t)ft_atoi(source));
 				free(test);
 			}
 			else
@@ -31,7 +31,7 @@ static int is_valid_ip(char **ip, t_data *data)
 			char    *test = ft_itoa(ft_atoi(target));
 			if (!ft_strcmp(test, target))
 			{
-				data->target.sin_addr.s_addr = (uint32_t)ft_atoi(target);
+				data->target.sin_addr.s_addr = htonl((uint32_t)ft_atoi(target));
 				free(test);
 			}
 			else
@@ -49,6 +49,8 @@ static int is_valid_ip(char **ip, t_data *data)
 			|| inet_pton(AF_INET, target, &(data->target.sin_addr)) != 1)
 			return (0);
 	}
+	data->source.sin_family = AF_INET;
+	data->target.sin_family = AF_INET;
 	return (1);
 }
 
@@ -87,9 +89,6 @@ static int is_valid_mac(char *mac)
 
 void    init_checks(int argc, char **argv, t_data *data)
 {
-	// Initialize the data structure
-	data->source_decimal = 0;
-	data->target_decimal = 0;
 	// Check if the user is root
 	if (getuid() != 0)
 		error("You must be root to run this program", -1, TRUE);

@@ -34,7 +34,7 @@ void    welcome()
 	printf(" / _|| |_        _ __   __ _ | | __  ___ | | _ __\n");
 	printf("|  _||  _|      | '  \\ / _` || |/ _|/ _ \\| || '  \\\n");
 	printf("|_|   \\__|______|_|_|_|\\__/_||_|\\__|\\___/|_||_|_|_|\n");
-	printf(GREEN"            A basic ARP poisoning program\n\n");
+	printf(GREEN"            A basic ARP poisoning program\n\n"RESET);
 }
 
 char    *getMacAddress(const char *interfaceName, int sockfd)

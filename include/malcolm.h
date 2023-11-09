@@ -60,9 +60,7 @@ typedef struct __attribute__((packed)) s_arp_header
 typedef struct s_data
 {
 	struct sockaddr_in  source;
-	int    source_decimal;
 	struct sockaddr_in  target;
-	int    target_decimal;
 }   t_data;
 
 extern int  g_packet_socket;

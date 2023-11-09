@@ -17,7 +17,7 @@ if_nametoindex
        The if_nametoindex() function returns the index of the  network  inter‐
        face corresponding to the name ifname.
 
-inet_addr
+inet_addr deprecated
        The  inet_addr()  function  converts  the Internet host address cp from
        IPv4 numbers-and-dots notation into binary data in network byte  order.
        If  the input is invalid, INADDR_NONE (usually -1) is returned.  Use of

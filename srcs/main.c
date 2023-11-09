@@ -45,6 +45,22 @@ int main(int argc, char **argv)
 		char    *tmp = getMacAddress("enp0s3", g_packet_socket);
 		ft_memcpy(mac, tmp, 18);
 		free(tmp);
+		char hostnameSource[NI_MAXHOST];
+		char hostnameTarget[NI_MAXHOST];
+		int codeS = getnameinfo((const struct sockaddr *)(&data.source), sizeof(data.source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
+		if (codeS != 0)
+		{
+			fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeS));
+			ft_memcpy(hostnameSource, "Unknown", 8);
+		}
+		printf("Hostname of source: %s\n", hostnameSource);
+		int codeT = getnameinfo((const struct sockaddr *)(&data.target), sizeof(data.target), hostnameTarget, NI_MAXHOST, NULL, 0, 0);
+		if (codeT != 0)
+		{
+			fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeT));
+			ft_memcpy(hostnameTarget, "Unknown", 8);
+		}
+		printf("Hostname of target: %s\n", hostnameTarget);
 	}
     parse(argv, &data);
 	printf("Waiting for ARP request...\n\n");
