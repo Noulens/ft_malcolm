@@ -4,8 +4,8 @@
 
 #include "malcolm.h"
 
-void    *parse(char **argv)
+void   parse(char **argv, t_data *data)
 {
 	(void)argv;
-	return (NULL);
+	(void)data;
 }

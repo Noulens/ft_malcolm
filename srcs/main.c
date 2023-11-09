@@ -31,11 +31,11 @@ void	signal_handling()
 
 int main(int argc, char **argv)
 {
-	void    *data = NULL;
+	t_data  data = {0};
 
 	welcome();
 	signal_handling();
-	init_checks(argc, argv);
+	init_checks(argc, argv, &data);
 	g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (g_packet_socket <= -1)
 		error("socket() failed", errno, TRUE);
@@ -46,11 +46,11 @@ int main(int argc, char **argv)
 		ft_memcpy(mac, tmp, 18);
 		free(tmp);
 	}
+    parse(argv, &data);
 	printf("Waiting for ARP request...\n\n");
 	while (1)
 	{
-		data = parse(argv);
-		poison(data);
+		poison(&data);
 		sleep(1);
 	}
 	return (0);

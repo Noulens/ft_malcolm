@@ -57,12 +57,20 @@ typedef struct __attribute__((packed)) s_arp_header
 	unsigned char arp_dpa[4];
 }   t_arp_header;
 
+typedef struct s_data
+{
+	struct sockaddr_in  source;
+	int    source_decimal;
+	struct sockaddr_in  target;
+	int    target_decimal;
+}   t_data;
+
 extern int  g_packet_socket;
 
-void    init_checks(int, char **);
+void    init_checks(int, char **, t_data *);
 int     check_hex(char *);
-void	*parse(char **);
-void	poison(void *);
+void    parse(char **, t_data *);
+void    poison(void *);
 void    welcome();
 void    error(const char *, int, int);
 

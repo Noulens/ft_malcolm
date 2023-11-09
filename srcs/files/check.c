@@ -4,35 +4,51 @@
 
 #include "malcolm.h"
 
-static int is_valid_ip(char *ip)
+static int is_valid_ip(char **ip, t_data *data)
 {
-	int		dots;
-	char	*tmp;
-	int		nb_bits;
-
-	tmp = ip;
-	dots = 0;
-	if (ft_strlen(tmp) > 15)
-		return (0);
-	if (ip[0] == '.' || ip[ft_strlen(ip) - 1] == '.')
-		return (0);
-	while (*tmp)
+	char    *source = ip[1];
+	char    *target = ip[3];
+	if (BONUS == TRUE)
 	{
-		if (*tmp == '.' && *(tmp + 1) != '.')
-			dots++;
-		tmp++;
+		if (ft_strnstr(source, ".", ft_strlen(source)) == NULL)
+		{
+			char    *test = ft_itoa(ft_atoi(source));
+			if (!ft_strcmp(test, source))
+			{
+				data->source.sin_addr.s_addr = (uint32_t)ft_atoi(source);
+				free(test);
+			}
+			else
+				return (free(test), 0);
+		}
+		else
+		{
+			if (inet_pton(AF_INET, source, &data->source.sin_addr) != 1)
+				return (0);
+		}
+		if (ft_strnstr(target, ".", ft_strlen(target)) == NULL)
+		{
+			char    *test = ft_itoa(ft_atoi(target));
+			if (!ft_strcmp(test, target))
+			{
+				data->target.sin_addr.s_addr = (uint32_t)ft_atoi(target);
+				free(test);
+			}
+			else
+				return (free(test), 0);
+		}
+		else
+		{
+			if (inet_pton(AF_INET, target, &data->target.sin_addr) != 1)
+				return (0);
+		}
 	}
-	if (dots != 3)
-		return (0);
-	tmp = ip;
-	while (dots-- >= 0)
+	else
 	{
-		nb_bits = ft_atoi(tmp);
-		if (nb_bits < 0 || nb_bits > 255)
+		if (inet_pton(AF_INET, source, &(data->source.sin_addr)) != 1)
 			return (0);
-		while (*tmp && *tmp != '.')
-			tmp++;
-		tmp++;
+		if (inet_pton(AF_INET, target, &(data->target.sin_addr)) != 1)
+			return (0);
 	}
 	return (1);
 }
@@ -70,8 +86,11 @@ static int is_valid_mac(char *mac)
 	return (1);
 }
 
-void    init_checks(int argc, char **argv)
+void    init_checks(int argc, char **argv, t_data *data)
 {
+	// Initialize the data structure
+	data->source_decimal = 0;
+	data->target_decimal = 0;
 	// Check if the user is root
 	if (getuid() != 0)
 		error("You must be root to run this program", -1, TRUE);
@@ -84,10 +103,8 @@ void    init_checks(int argc, char **argv)
 	else if (argc != 5)
 	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1, TRUE);
     // Check if the user gave valid IP addresses
-    if (!is_valid_ip(argv[1]))
-		error("Invalid source IP address", -1, TRUE);
-    if (!is_valid_ip(argv[3]))
-	    error("Invalid target IP address", -1, TRUE);
+    if (!is_valid_ip(argv, data))
+		error("Invalid IP address", -1, TRUE);
 	// Check if the user gave valid MAC addresses
 	if (!is_valid_mac(argv[2]))
 		error("Invalid source MAC address", -1, TRUE);
