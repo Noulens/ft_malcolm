@@ -11,6 +11,7 @@
 
 # define TRUE 1
 # define FALSE 0
+# define MAX_BUF 256
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -32,7 +33,8 @@
 # include <sys/ioctl.h>
 
 /* Ethernet ARP packet from RFC 826 */
-typedef struct {
+typedef struct s_arp_ether_ipv4
+{
 	uint16_t arp_hd;   /* Format of hardware address */
 	uint16_t ptype;   /* Format of protocol address */
 	uint8_t hlen;    /* Length of hardware address */
@@ -42,7 +44,7 @@ typedef struct {
 	uint32_t spa;   /* Sender IP address */
 	uint8_t tha[ETH_ALEN];  /* Target hardware address */
 	uint32_t tpa;   /* Target IP address */
-} arp_ether_ipv4;
+}	t_arp_ether_ipv4;
 
 typedef struct __attribute__((packed)) s_arp_header
 {
@@ -55,26 +57,27 @@ typedef struct __attribute__((packed)) s_arp_header
 	unsigned char arp_spa[4];
 	unsigned char arp_dha[6];
 	unsigned char arp_dpa[4];
-}   t_arp_header;
+}	t_arp_header;
 
 typedef struct s_data
 {
 	struct sockaddr_in  source;
 	struct sockaddr_in  target;
-}   t_data;
+}	t_data;
 
 extern int  g_packet_socket;
 
-void    init_checks(int, char **, t_data *);
-int     check_hex(char *);
-void    parse(char **, t_data *);
-void    poison(void *);
-void    welcome();
-void    error(const char *, int, int);
+void	init_checks(int, char **, t_data *);
+int		check_hex(char *);
+void	poison(void *);
+void	welcome();
+void	error(const char *, int, int);
 
 /*
  * BONUS
  */
-char    *getMacAddress(const char *, int);
+char	*getMacAddress(const char *, int);
+int     getEthernetInterface(char ***);
+void    verbose(t_data *);
 
 #endif //FT_MALCOLM_MALCOLM_H

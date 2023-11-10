@@ -13,10 +13,10 @@ SRCS_DIR	=	$(sort $(dir $(wildcard ./srcs/*/)))
 SRCS		=	$(addprefix srcs/,						\
 										main.c			\
 					$(addprefix files/,	spoof.c			\
-										parse.c			\
 										tools.c			\
 										check.c			\
 										error.c			\
+										interface.c		\
 										)				\
 					)
 

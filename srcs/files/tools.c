@@ -36,35 +36,3 @@ void    welcome()
 	printf("|_|   \\__|______|_|_|_|\\__/_||_|\\__|\\___/|_||_|_|_|\n");
 	printf(GREEN"            A basic ARP poisoning program\n\n"RESET);
 }
-
-char    *getMacAddress(const char *interfaceName, int sockfd)
-{
-	struct ifreq ifr = {};
-	char    mac[18];
-	char    *tmp;
-
-	ft_memset(&ifr, 0, sizeof(ifr));
-	ft_memset(mac, 0, sizeof(mac));
-	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", interfaceName);
-	if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) <= -1)
-		error("ioctl", errno, FALSE);
-	printf("My machine: MAC Address of %s: %02X:%02X:%02X:%02X:%02X:%02X\n",
-	       interfaceName,
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[0],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[1],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[2],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[3],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[4],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
-	sprintf(mac, "%02X:%02X:%02X:%02X:%02X:%02X",
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[0],
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[1],
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[2],
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[3],
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[4],
-	        (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
-	tmp = ft_strdup(mac);
-	if (!tmp)
-		error("enomem", errno, TRUE);
-	return (tmp);
-}
