@@ -33,30 +33,17 @@
 # include <sys/ioctl.h>
 
 /* Ethernet ARP packet from RFC 826 */
-typedef struct s_arp_ether_ipv4
-{
-	uint16_t arp_hd;   /* Format of hardware address */
-	uint16_t ptype;   /* Format of protocol address */
-	uint8_t hlen;    /* Length of hardware address */
-	uint8_t plen;    /* Length of protocol address */
-	uint16_t op;    /* ARP opcode (command) */
-	uint8_t sha[ETH_ALEN];  /* Sender hardware address */
-	uint32_t spa;   /* Sender IP address */
-	uint8_t tha[ETH_ALEN];  /* Target hardware address */
-	uint32_t tpa;   /* Target IP address */
-}	t_arp_ether_ipv4;
-
 typedef struct __attribute__((packed)) s_arp_header
 {
-	unsigned short arp_hd;
-	unsigned short arp_pr;
-	unsigned char arp_hdl;
-	unsigned char arp_prl;
-	unsigned short arp_op;
-	unsigned char arp_sha[6];
-	unsigned char arp_spa[4];
-	unsigned char arp_dha[6];
-	unsigned char arp_dpa[4];
+	uint16_t arp_hd;            /* Format of hardware address */
+	uint16_t arp_pr;            /* Format of protocol address */
+	uint8_t arp_hdl;            /* Length of hardware address */
+	uint8_t arp_prl;            /* Length of protocol address */
+	uint16_t arp_op;            /* ARP opcode (command) */
+	uint8_t arp_sha[ETH_ALEN];  /* Sender hardware address */
+	uint32_t arp_spa;           /* Sender IP address */
+	uint8_t arp_dha[ETH_ALEN];  /* Target hardware address */
+	uint32_t arp_dpa;           /* Target IP address */
 }	t_arp_header;
 
 typedef struct s_data
@@ -72,6 +59,7 @@ int		check_hex(char *);
 void	poison(void *);
 void	welcome();
 void	error(const char *, int, int);
+void    interfaceSimple();
 
 /*
  * BONUS
@@ -79,6 +67,5 @@ void	error(const char *, int, int);
 char	*getMacAddress(const char *, int);
 int     getEthernetInterface(char ***);
 void    verbose(t_data *);
-void    interfaceSimple();
 
 #endif //FT_MALCOLM_MALCOLM_H
