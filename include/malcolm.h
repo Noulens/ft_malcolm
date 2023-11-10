@@ -79,5 +79,6 @@ void	error(const char *, int, int);
 char	*getMacAddress(const char *, int);
 int     getEthernetInterface(char ***);
 void    verbose(t_data *);
+void    interfaceSimple();
 
 #endif //FT_MALCOLM_MALCOLM_H
