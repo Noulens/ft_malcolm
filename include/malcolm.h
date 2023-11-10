@@ -59,12 +59,12 @@ int		check_hex(char *);
 void	poison(void *);
 void	welcome();
 void	error(const char *, int, int);
-void    interfaceSimple();
+void    interface();
 
 /*
  * BONUS
  */
-char	*getMacAddress(const char *, int);
+void	getMacAddress(const char *, int);
 int     getEthernetInterface(char ***);
 void    verbose(t_data *);
 

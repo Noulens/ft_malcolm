@@ -4,7 +4,7 @@
 
 #include "malcolm.h"
 
-void    interfaceSimple()
+void    interface()
 {
 	struct ifaddrs *ifap;
 	struct ifaddrs *ifa;
@@ -18,24 +18,34 @@ void    interfaceSimple()
 		{
 			sa = (struct sockaddr_in *)ifa->ifa_addr;
 			addr = inet_ntoa(sa->sin_addr);
-			printf("Interface: %-17sAddress: %s\n", ifa->ifa_name, addr);
+			printf("Interface: %s\n\tAddress: %s\n", ifa->ifa_name, addr);
+			if (ifa->ifa_broadaddr)
+			{
+				sa = (struct sockaddr_in *)ifa->ifa_broadaddr;
+				addr = inet_ntoa(sa->sin_addr);
+				printf("\tBroadcast: %s\n", addr);
+			}
+			else
+				printf("\tNo broadcast address\n");
+			if (BONUS == TRUE)
+				getMacAddress(ifa->ifa_name, g_packet_socket);
 		}
 	}
+	ft_putchar_fd('\n', 1);
 	freeifaddrs(ifap);
 }
 
-char    *getMacAddress(const char *interfaceName, int sockfd)
+void    getMacAddress(const char *interfaceName, int sockfd)
 {
 	struct ifreq ifr = {};
 	char    mac[18];
-	char    *tmp;
 
 	ft_memset(&ifr, 0, sizeof(ifr));
 	ft_memset(mac, 0, sizeof(mac));
 	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", interfaceName);
 	if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) <= -1)
 		error("ioctl", errno, FALSE);
-	printf("MAC Address of %s: %02X:%02X:%02X:%02X:%02X:%02X\n",
+	printf("\tMAC Address of %s: %02X:%02X:%02X:%02X:%02X:%02X\n",
 	       interfaceName,
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[0],
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[1],
@@ -43,34 +53,44 @@ char    *getMacAddress(const char *interfaceName, int sockfd)
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[3],
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[4],
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
-//	sprintf(mac, "%02X:%02X:%02X:%02X:%02X:%02X",
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[0],
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[1],
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[2],
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[3],
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[4],
-//	        (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
-//	tmp = ft_strdup(mac);
-//	if (!tmp)
-//		error("enomem", errno, TRUE);
-//	return (tmp);
-	(void)tmp;
-	return (NULL);
 }
 
-int getEthernetInterface(char ***interfaces)
+void verbose(t_data *data)
 {
-	/*
+	char hostnameSource[NI_MAXHOST];
+	char hostnameTarget[NI_MAXHOST];
+
+	interface();
+	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
+	if (codeS != 0)
+	{
+		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeS));
+		ft_memcpy(hostnameSource, "Unknown", 8);
+	}
+	printf("Hostname of source: %s\n", hostnameSource);
+	int codeT = getnameinfo((const struct sockaddr *)(&(*data).target), sizeof((*data).target), hostnameTarget, NI_MAXHOST, NULL, 0, 0);
+	if (codeT != 0)
+	{
+		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeT));
+		ft_memcpy(hostnameTarget, "Unknown", 8);
+	}
+	printf("Hostname of target: %s\n", hostnameTarget);
+}
+
+// This function achieve the same thing as the interface() function above but uses ioctl() instead of getifaddrs()
+/*int getEthernetInterface(char ***interfaces)
+{
+	*//*
 	 * Structure used in SIOCGIFCONF request.  Used to retrieve interface
 	 * configuration for machine (useful for programs which must know all
 	 * networks accessible).
-	 */
+	 *//*
 	struct ifconf ifc;
-	/*
+	*//*
 	 * Interface request structure used for socket ioctl's.  All interface
 	 * ioctl's must have parameter definitions which begin with ifr_name.
 	 * The remainder may be interface specific.
-	 */
+	 *//*
 	struct ifreq ifr[10]; // 10 interface max
 	size_t i;
 	unsigned long ifc_num;
@@ -123,32 +143,4 @@ int getEthernetInterface(char ***interfaces)
 	}
 	ft_putchar_fd('\n', 1);
 	return (0);
-}
-
-void verbose(t_data *data)
-{
-	char **interfaces = NULL;
-
-	if (getEthernetInterface(&interfaces) != 0)
-		error("getEthernetInterface() failed", errno, FALSE);
-	for (int i = 0; interfaces[i] != NULL; i++)
-		getMacAddress(interfaces[i], g_packet_socket);
-	ft_free_split(interfaces);
-	ft_putchar_fd('\n', 1);
-	char hostnameSource[NI_MAXHOST];
-	char hostnameTarget[NI_MAXHOST];
-	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
-	if (codeS != 0)
-	{
-		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeS));
-		ft_memcpy(hostnameSource, "Unknown", 8);
-	}
-	printf("Hostname of source: %s\n", hostnameSource);
-	int codeT = getnameinfo((const struct sockaddr *)(&(*data).target), sizeof((*data).target), hostnameTarget, NI_MAXHOST, NULL, 0, 0);
-	if (codeT != 0)
-	{
-		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeT));
-		ft_memcpy(hostnameTarget, "Unknown", 8);
-	}
-	printf("Hostname of target: %s\n", hostnameTarget);
-}
+}*/

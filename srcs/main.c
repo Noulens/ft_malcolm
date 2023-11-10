@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	if (BONUS == TRUE && argc == 6 && !ft_strcmp(argv[5], "--verbose"))
 		verbose(&data);
 	else
-		interfaceSimple();
+		interface();
 	printf("\nWaiting for ARP request...\n\n");
 	while (1)
 	{
