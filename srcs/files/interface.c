@@ -23,6 +23,7 @@ void    interface(t_data *data)
 			printf("Interface: %s\n\tAddress: %s index: %d\n", ifa->ifa_name, addr, if_nametoindex(ifa->ifa_name));
             if (!ft_strncmp(ifa->ifa_name, "eth", 3) || !ft_strncmp(ifa->ifa_name, "enp", 3) || !ft_strncmp(ifa->ifa_name, "ens", 3))
             {
+                data->interface_index = if_nametoindex(ifa->ifa_name);
                 ft_memcpy(data->interface, ifa->ifa_name, ft_strlen(ifa->ifa_name) + 1);
             }
 			if (ifa->ifa_broadaddr)

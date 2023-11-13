@@ -58,6 +58,7 @@ typedef struct s_data
     uint8_t             target_mac[ETH_ALEN];
     int                 opt;
     char                interface[IFNAMSIZ];
+    unsigned int        interface_index;
 }	t_data;
 
 extern int  g_packet_socket;
