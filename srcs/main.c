@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 {
 	t_data  data = {0};
     struct ether_arp arp = {0};
-  //  const unsigned char ether_broadcast_addr[]= {0xff,0xff,0xff,0xff, 0xff,0xff};
+    const unsigned char ether_broadcast_addr[]= {0xff,0xff,0xff,0xff, 0xff,0xff};
     struct sockaddr_ll addr = {0};
 
 	welcome();
@@ -49,9 +49,9 @@ int main(int argc, char **argv)
 		interface(&data);
 
     addr.sll_family = AF_PACKET;
-//    addr.sll_halen = ETH_ALEN;
+    addr.sll_halen = ETH_ALEN;
     addr.sll_protocol = htons(ETH_P_ARP);
-//    ft_memcpy(addr.sll_addr,ether_broadcast_addr,ETH_ALEN);
+    ft_memcpy(addr.sll_addr,ether_broadcast_addr,ETH_ALEN);
     addr.sll_ifindex = data.interface_index;
 
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
@@ -69,15 +69,13 @@ int main(int argc, char **argv)
     ft_memcpy(&arp.arp_spa, &data.source.sin_addr, sizeof(arp.arp_spa));
     ft_memcpy(&arp.arp_sha, &data.source_mac, sizeof(arp.arp_sha));
 
-    if (sendto(g_packet_socket, &arp, sizeof(arp), 0, (struct sockaddr *)&addr, sizeof(addr))==-1)
-    {
-        error("sendto() failed", errno, TRUE);
-    }
-
-/*    while (1)
+    while (1)
 	{
-		poison(&data);
+        if (sendto(g_packet_socket, &arp, sizeof(arp), 0, (struct sockaddr *)&addr, sizeof(addr))==-1)
+        {
+            error("sendto() failed", errno, TRUE);
+        }
 		sleep(1);
-	}*/
+	}
 	return (0);
 }
