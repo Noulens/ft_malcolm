@@ -4,12 +4,14 @@
 
 #include "malcolm.h"
 
-void    interface()
+void    interface(t_data *data)
 {
 	struct ifaddrs *ifap;
 	struct ifaddrs *ifa;
 	struct sockaddr_in *sa;
 	char    *addr;
+
+
 
 	getifaddrs(&ifap);
 	for (ifa = ifap; ifa; ifa = ifa->ifa_next)
@@ -18,7 +20,11 @@ void    interface()
 		{
 			sa = (struct sockaddr_in *)ifa->ifa_addr;
 			addr = inet_ntoa(sa->sin_addr);
-			printf("Interface: %s\n\tAddress: %s\n", ifa->ifa_name, addr);
+			printf("Interface: %s\n\tAddress: %s index: %d\n", ifa->ifa_name, addr, if_nametoindex(ifa->ifa_name));
+            if (!ft_strncmp(ifa->ifa_name, "eth", 3) || !ft_strncmp(ifa->ifa_name, "enp", 3) || !ft_strncmp(ifa->ifa_name, "ens", 3))
+            {
+                ft_memcpy(data->interface, ifa->ifa_name, ft_strlen(ifa->ifa_name) + 1);
+            }
 			if (ifa->ifa_broadaddr)
 			{
 				sa = (struct sockaddr_in *)ifa->ifa_broadaddr;
@@ -55,12 +61,13 @@ void    getMacAddress(const char *interfaceName, int sockfd)
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
 }
 
-void verbose(t_data *data)
+void getHost(t_data *data)
 {
 	char hostnameSource[NI_MAXHOST];
 	char hostnameTarget[NI_MAXHOST];
 
-	interface();
+    data->opt |= TRUE;
+	interface(data);
 	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
 	if (codeS != 0)
 	{

@@ -29,27 +29,35 @@
 # include <errno.h>
 # include "colors.h"
 # include "libft.h"
-
+# include <netpacket/packet.h>
+# include <net/ethernet.h>
+# include <netinet/if_ether.h>
 # include <sys/ioctl.h>
 
 /* Ethernet ARP packet from RFC 826 */
-typedef struct __attribute__((packed)) s_arp_header
+typedef struct __attribute__((packed)) s_arp_packet
 {
+    // ARP header
 	uint16_t arp_hd;            /* Format of hardware address */
 	uint16_t arp_pr;            /* Format of protocol address */
 	uint8_t arp_hdl;            /* Length of hardware address */
 	uint8_t arp_prl;            /* Length of protocol address */
-	uint16_t arp_op;            /* ARP opcode (command) */
+    uint16_t arp_opcode;        /* ARP opcode (command) */
+    // ARP data
 	uint8_t arp_sha[ETH_ALEN];  /* Sender hardware address */
 	uint32_t arp_spa;           /* Sender IP address */
 	uint8_t arp_dha[ETH_ALEN];  /* Target hardware address */
 	uint32_t arp_dpa;           /* Target IP address */
-}	t_arp_header;
+}	t_arp_packet;
 
 typedef struct s_data
 {
 	struct sockaddr_in  source;
+    uint8_t             source_mac[ETH_ALEN];
 	struct sockaddr_in  target;
+    uint8_t             target_mac[ETH_ALEN];
+    int                 opt;
+    char                interface[IFNAMSIZ];
 }	t_data;
 
 extern int  g_packet_socket;
@@ -59,13 +67,13 @@ int		check_hex(char *);
 void	poison(void *);
 void	welcome();
 void	error(const char *, int, int);
-void    interface();
+void    interface(t_data *);
 
 /*
  * BONUS
  */
 void	getMacAddress(const char *, int);
 int     getEthernetInterface(char ***);
-void    verbose(t_data *);
+void    getHost(t_data *);
 
 #endif //FT_MALCOLM_MALCOLM_H

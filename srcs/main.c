@@ -32,22 +32,57 @@ void	signal_handling()
 int main(int argc, char **argv)
 {
 	t_data  data = {0};
+    struct ether_arp arp = {0};
+    const unsigned char ether_broadcast_addr[]=
+            {0xff,0xff,0xff,0xff,0xff,0xff};
+    struct sockaddr_ll addr = {0};
+
+    addr.sll_family = AF_PACKET;
+    addr.sll_halen = ETH_ALEN;
+    addr.sll_protocol = htons(ETH_P_ARP);
+    addr.sll_ifindex = 2;
+    ft_memcpy(addr.sll_addr,ether_broadcast_addr,ETH_ALEN);
 
 	welcome();
 	signal_handling();
 	init_checks(argc, argv, &data);
-	g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+	g_packet_socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
 	if (g_packet_socket <= -1)
 		error("socket() failed", errno, TRUE);
 	if (BONUS == TRUE && argc == 6 && !ft_strcmp(argv[5], "--verbose"))
-		verbose(&data);
+		getHost(&data);
 	else
-		interface();
+		interface(&data);
+
+
+    printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
 	printf("\nWaiting for ARP request...\n\n");
-	while (1)
+
+    const char* target_ip_string=argv[3];
+    struct in_addr target_ip_addr={0};
+    if (!inet_aton(target_ip_string,&target_ip_addr))
+    {
+        error("inet_aton() failed", errno, TRUE);
+    }
+    ft_memcpy(&arp.arp_tpa,&target_ip_addr.s_addr,sizeof(arp.arp_tpa));
+
+    arp.arp_hrd = htons(ARPHRD_ETHER);
+    arp.arp_pro = htons(ETH_P_IP);
+    arp.arp_hln = ETH_ALEN;
+    arp.arp_pln = sizeof(in_addr_t);
+    arp.arp_op = htons(ARPOP_REQUEST);
+    ft_memcpy(&arp.arp_tha, &data.target_mac, sizeof(arp.arp_tha));
+    ft_memcpy(&arp.arp_spa, &data.source.sin_addr, sizeof(arp.arp_spa));
+    ft_memcpy(&arp.arp_sha, &data.source_mac, sizeof(arp.arp_sha));
+    if (sendto(g_packet_socket, &arp, sizeof(arp), 0, (struct sockaddr*)&addr, sizeof(addr))==-1)
+    {
+        error("sendto() failed", errno, TRUE);
+    }
+
+/*    while (1)
 	{
 		poison(&data);
 		sleep(1);
-	}
+	}*/
 	return (0);
 }

@@ -54,7 +54,7 @@ static int is_valid_ip(char **ip, t_data *data)
 	return (1);
 }
 
-static int is_valid_mac(char *mac)
+static int is_valid_mac(char *mac, uint8_t *mac_addr)
 {
 	int		d_dots;
 	char	*tmp;
@@ -75,14 +75,17 @@ static int is_valid_mac(char *mac)
 	if (d_dots != 5)
 		return (0);
 	tmp = mac;
-	while (d_dots-- >= 0)
+    d_dots = 0;
+	while (d_dots < 6)
 	{
 		nb_bits = check_hex(tmp);
 		if (nb_bits < 0x00 || nb_bits > 0xff)
 			return (0);
+        mac_addr[d_dots] = (uint8_t)nb_bits;
 		while (*tmp && *tmp != ':')
 			tmp++;
 		tmp++;
+        d_dots++;
 	}
 	return (1);
 }
@@ -104,8 +107,8 @@ void    init_checks(int argc, char **argv, t_data *data)
     if (!is_valid_ip(argv, data))
 		error("Invalid IP address", -1, TRUE);
 	// Check if the user gave valid MAC addresses
-	if (!is_valid_mac(argv[2]))
+	if (!is_valid_mac(argv[2], data->source_mac))
 		error("Invalid source MAC address", -1, TRUE);
-	if (!is_valid_mac(argv[4]))
+	if (!is_valid_mac(argv[4], data->target_mac))
 		error("Invalid target MAC address", -1, TRUE);
 }
