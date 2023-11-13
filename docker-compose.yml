@@ -1,0 +1,31 @@
+version: '3.5'
+
+services:
+  attacker:
+    container_name: attacker
+    build: .
+    restart: on-failure
+    networks:
+      - mynetwork
+    command: tail -f /dev/null
+
+  source:
+    image: alpine
+    container_name: source
+    restart: on-failure
+    networks:
+      - mynetwork
+    command: tail -f /dev/null
+
+  target:
+    image: alpine
+    container_name: target
+    restart: on-failure
+    networks:
+      - mynetwork
+    command: tail -f /dev/null
+
+networks:
+  mynetwork:
+    driver: bridge
+
