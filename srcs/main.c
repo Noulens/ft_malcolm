@@ -72,7 +72,10 @@ int main(int argc, char **argv)
 	build_arp_request(&data, &req);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
 	if (BONUS == TRUE && (data.opt & REQUEST))
+	{
 		printf("\nSending ARP request to poison target...\n\n");
+		(void)((data.opt & VERBOSE) && print_data(&req, NULL));
+	}
 	else
 		printf("\nWaiting for ARP request...\n\n");
 	while (TRUE)
@@ -85,12 +88,8 @@ int main(int argc, char **argv)
 		}
 		else // else it is a REPLY attack
 		{
-			ssize_t buf_len;
-			buf_len = recvfrom(g_packet_socket, buffer, 1001, 0, (struct sockaddr *)&addr, &addr_len);
-			if (buf_len == -1)
+			if (recvfrom(g_packet_socket, buffer, MAX_BUF, 0, (struct sockaddr *)&addr, &addr_len) == -1)
 				error("recvfrom() failed", errno, FALSE);
-			buffer[buf_len] = 0;
-			printf("Packet received, reading ethernet header...\n");
 			struct ethhdr *eth_hdr = (struct ethhdr *)buffer;
 			if (ntohs(eth_hdr->h_proto) == ETH_P_ARP)
 				printf("ARP packet incoming...\n");
@@ -100,7 +99,10 @@ int main(int argc, char **argv)
 			if (ntohs(arp_request->arp_opcode) == ARPOP_REQUEST
 				&& arp_request->arp_spa == data.target.sin_addr.s_addr
 				&& arp_request->arp_dpa == data.source.sin_addr.s_addr)
-				printf("ARP request received\nwho has %s, tell %s", inet_ntoa(data.source.sin_addr), inet_ntoa(data.target.sin_addr));
+			{
+				printf("ARP request received\nwho has %s, tell %s\n", inet_ntoa(data.source.sin_addr), inet_ntoa(data.target.sin_addr));
+				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
+			}
 			else
 				continue ;
 		}
