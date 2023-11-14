@@ -50,29 +50,25 @@ void    choose_socket_type(t_data *data)
 int main(int argc, char **argv)
 {
 	t_data              data = {0};
-	// we will use this to manipulate arp requests and replies
-	t_arp_packet    req = {0};
-	// we will use this buffer to receive packets
-	uint8_t         buffer[MAX_BUF];
-	// we will use this to broadcast to all MAC device
-    const unsigned char ether_broadcast_addr[]= {0xff,0xff,0xff,0xff, 0xff,0xff};
-    // this will contain the link layer address
-	struct sockaddr_ll addr = {0};
-	socklen_t   addr_len = sizeof(addr);
+	t_arp_packet        req = {0};
+	uint8_t             buffer[MAX_BUF];
+    const uint8_t       ether_broadcast_addr[]= {0xff,0xff,0xff,0xff, 0xff,0xff};
+	struct sockaddr_ll  addr = {0};
+	socklen_t           addr_len = sizeof(addr);
 
 	welcome();
 	signal_handling();
 	init_checks(argc, argv, &data);
 	choose_socket_type(&data);
 	if (BONUS == TRUE && argc == 7 && !ft_strcmp(argv[6], "--verbose"))
-		getHost(&data); // Hostname resolution
+		getHost(&data);
 	else
-		interface(&data); // Get interface data
+		interface(&data);
 	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
-	build_arp_request(&data, &req);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
 	if (BONUS == TRUE && (data.opt & REQUEST))
 	{
+		build_arp_request(&data, &req);
 		printf("\nSending ARP request to poison target...\n\n");
 		(void)((data.opt & VERBOSE) && print_data(&req, NULL));
 	}
@@ -80,13 +76,13 @@ int main(int argc, char **argv)
 		printf("\nWaiting for ARP request...\n\n");
 	while (TRUE)
 	{
-		if (BONUS == TRUE && (data.opt & REQUEST)) // check if we are on request attack
+		if (BONUS == TRUE && (data.opt & REQUEST))
 		{
 			if (sendto(g_packet_socket, &req, sizeof(req), 0, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 				error("sendto() failed", errno, TRUE);
 			sleep(1);
 		}
-		else // else it is a REPLY attack
+		else
 		{
 			if (recvfrom(g_packet_socket, buffer, MAX_BUF, 0, (struct sockaddr *)&addr, &addr_len) == -1)
 				error("recvfrom() failed", errno, FALSE);
@@ -102,11 +98,13 @@ int main(int argc, char **argv)
 			{
 				printf("ARP request received\nwho has %s, tell %s\n", inet_ntoa(data.source.sin_addr), inet_ntoa(data.target.sin_addr));
 				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
+				break ;
 			}
 			else
 				continue ;
 		}
 	}
+	// todo: edit packet here
 	poison(&data);
 	if (close(g_packet_socket) == -1)
 		error("Error: close() failed: ", errno, TRUE);
