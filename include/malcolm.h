@@ -11,7 +11,7 @@
 
 # define TRUE 1
 # define FALSE 0
-# define MAX_BUF 256
+# define MAX_BUF 1001
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -50,6 +50,13 @@ typedef struct __attribute__((packed)) s_arp_packet
 	uint32_t arp_dpa;           /* Target IP address */
 }	t_arp_packet;
 
+typedef enum e_type_of_attack
+{
+    REPLY = 10,
+    REQUEST = 100,
+    VERBOSE = 1000
+}   t_type_of_attack;
+
 typedef struct s_data
 {
 	struct sockaddr_in  source;
@@ -69,12 +76,14 @@ void	poison(void *);
 void	welcome();
 void	error(const char *, int, int);
 void    interface(t_data *);
+void    build_arp_request(t_data *data, t_arp_packet *req);
+void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr);
 
 /*
  * BONUS
  */
 void	getMacAddress(const char *, int);
-int     getEthernetInterface(char ***);
 void    getHost(t_data *);
+int     getEthernetInterface(char ***);
 
 #endif //FT_MALCOLM_MALCOLM_H

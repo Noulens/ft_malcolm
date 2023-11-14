@@ -10,14 +10,13 @@ RUN	        apt update && \
             usermode \
             gcc \
             gcc-multilib \
-            gdb \
             valgrind \
             dsniff \
-            arp \
-            net-tools
+            net-tools \
+            tcpdump
 
-COPY        . .
+WORKDIR     ./ft_malcolm/
 
-WORKDIR     ./ft_malcolm
+COPY        .. .
 
-RUN        make
+

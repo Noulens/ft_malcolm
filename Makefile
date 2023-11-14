@@ -16,7 +16,7 @@ SRCS		=	$(addprefix srcs/,						\
 										tools.c			\
 										check.c			\
 										error.c			\
-										interface.c		\
+										network.c		\
 										)				\
 					)
 

@@ -98,8 +98,12 @@ void    init_checks(int argc, char **argv, t_data *data)
     // Check if the user gave the right number of arguments
 	if (BONUS == TRUE)
 	{
-		if ((argc != 5 && argc != 6) || (argc == 6 && ft_strcmp(argv[5], "--verbose") != 0))
-			error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr> [--verbose]", -1, TRUE);
+		if ((argc != 6 && argc != 7) || (ft_strcmp(argv[5], "--request") && ft_strcmp(argv[5], "--reply")) || (argc == 7 && ft_strcmp(argv[6], "--verbose") != 0))
+			error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr> <Type of attack> [--verbose]", -1, TRUE);
+        if (!ft_strcmp(argv[5], "--request"))
+            data->opt |= REQUEST;
+        else
+            data->opt |= REPLY;
 	}
 	else if (argc != 5)
 	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1, TRUE);
