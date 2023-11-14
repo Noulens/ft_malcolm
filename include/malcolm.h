@@ -79,6 +79,7 @@ void    interface(t_data *);
 void    build_arp_request(t_data *data, t_arp_packet *req);
 void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr);
 int     print_data(t_arp_packet *ah, struct ethhdr *eh);
+void    choose_socket_type(t_data *data);
 
 /*
  * BONUS

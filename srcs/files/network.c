@@ -4,6 +4,24 @@
 
 #include "malcolm.h"
 
+void    choose_socket_type(t_data *data)
+{
+	if (BONUS == TRUE && (data->opt & REQUEST))
+	{
+		// Using DGRAM builds the ethernet header for me, no need to build from scratch
+		g_packet_socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
+		if (g_packet_socket <= -1)
+			error("socket() failed", errno, TRUE);
+	}
+	else
+	{
+		// Using RAW allow to receive raw packets
+		g_packet_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+		if (g_packet_socket <= -1)
+			error("socket() failed", errno, TRUE);
+	}
+}
+
 void    interface(t_data *data)
 {
 	struct ifaddrs *ifap;
