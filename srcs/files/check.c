@@ -44,7 +44,6 @@ static int is_valid_ip(char **ip, t_data *data)
 	char    *target = ip[3];
 	if (BONUS == TRUE)
 	{
-		// Check if hostname is given for source
 		for (int i = 0; ip[1][i]; i++)
 		{
 			if (ft_isalpha(ip[1][i]))
@@ -57,7 +56,6 @@ static int is_valid_ip(char **ip, t_data *data)
 			if (ip[1][i + 1] == '\0')
 				source = ft_strdup(ip[1]);
 		}
-		// Check if hostname is given for target
 		for (int i = 0; ip[3][i]; i++)
 		{
 			if (ft_isalpha(ip[3][i]))
@@ -70,7 +68,6 @@ static int is_valid_ip(char **ip, t_data *data)
 			if (ip[3][i + 1] == '\0')
 				target = ft_strdup(ip[3]);
 		}
-		// Do source
 		if (ft_strnstr(source, ".", ft_strlen(source)) == NULL)
 		{
 			char    *test = ft_itoa(ft_atoi(source));
@@ -89,7 +86,6 @@ static int is_valid_ip(char **ip, t_data *data)
 				return (0);
 		}
 		free(source);
-		// Do target
 		if (ft_strnstr(target, ".", ft_strlen(target)) == NULL)
 		{
 			char    *test = ft_itoa(ft_atoi(target));
@@ -158,10 +154,8 @@ static int is_valid_mac(char *mac, uint8_t *mac_addr)
 
 void    init_checks(int argc, char **argv, t_data *data)
 {
-	// Check if the user is root
 	if (getuid() != 0)
 		error("You must be root to run this program", -1, TRUE);
-    // Check if the user gave the right number of arguments
 	if (BONUS == TRUE)
 	{
 		if ((argc != 6 && argc != 7) || (ft_strcmp(argv[5], "--request") && ft_strcmp(argv[5], "--reply")) || (argc == 7 && ft_strcmp(argv[6], "--verbose") != 0))
@@ -175,10 +169,8 @@ void    init_checks(int argc, char **argv, t_data *data)
 	}
 	else if (argc != 5)
 	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1, TRUE);
-    // Check if the user gave valid IP addresses
     if (!is_valid_ip(argv, data))
 		error("Invalid IP address", -1, TRUE);
-	// Check if the user gave valid MAC addresses
 	if (!is_valid_mac(argv[2], data->source_mac))
 		error("Invalid source MAC address", -1, TRUE);
 	if (!is_valid_mac(argv[4], data->target_mac))
