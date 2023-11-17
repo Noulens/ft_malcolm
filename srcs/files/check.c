@@ -4,12 +4,72 @@
 
 #include "malcolm.h"
 
+char    *hostnameResolution(const char *hostname)
+{
+	struct addrinfo hints;
+	struct addrinfo *res;
+	struct addrinfo *r;
+	int status;
+	char buffer[INET_ADDRSTRLEN];
+	char *ret;
+
+	ft_memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM; // TCP
+	status = getaddrinfo(hostname, 0, &hints, &res);
+	if (status != 0)
+	{
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+		return (NULL);
+	}
+	r = res;
+	while (r != NULL)
+	{
+		if (r->ai_family == AF_INET)
+		{
+			struct sockaddr_in *ipv4 = (struct sockaddr_in *)r->ai_addr;
+			inet_ntop(r->ai_family, &(ipv4->sin_addr), buffer, sizeof buffer);
+			printf("IP adresses for %s: %s\n", hostname, buffer);
+		}
+		r = r->ai_next;
+	}
+	freeaddrinfo(res);
+	ret = ft_strdup(buffer);
+	return (ret);
+}
+
 static int is_valid_ip(char **ip, t_data *data)
 {
 	char    *source = ip[1];
 	char    *target = ip[3];
 	if (BONUS == TRUE)
 	{
+		// Check if hostname is given for source
+		for (int i = 0; ip[1][i]; i++)
+		{
+			if (ft_isalpha(ip[1][i]))
+			{
+				source = hostnameResolution(ip[1]);
+				if (!source)
+					return (0);
+				break ;
+			}
+			if (ip[1][i + 1] == '\0')
+				source = ft_strdup(ip[1]);
+		}
+		// Check if hostname is given for target
+		for (int i = 0; ip[3][i]; i++)
+		{
+			if (ft_isalpha(ip[3][i]))
+			{
+				target = hostnameResolution(ip[3]);
+				if (!target)
+					return (free(source), 0);
+				break ;
+			}
+			if (ip[3][i + 1] == '\0')
+				target = ft_strdup(ip[3]);
+		}
 		// Do source
 		if (ft_strnstr(source, ".", ft_strlen(source)) == NULL)
 		{
@@ -28,6 +88,7 @@ static int is_valid_ip(char **ip, t_data *data)
 			if (inet_pton(AF_INET, source, &data->source.sin_addr) != 1)
 				return (0);
 		}
+		free(source);
 		// Do target
 		if (ft_strnstr(target, ".", ft_strlen(target)) == NULL)
 		{
@@ -46,6 +107,7 @@ static int is_valid_ip(char **ip, t_data *data)
 			if (inet_pton(AF_INET, target, &data->target.sin_addr) != 1)
 				return (0);
 		}
+		free(target);
 	}
 	else
 	{
@@ -108,6 +170,8 @@ void    init_checks(int argc, char **argv, t_data *data)
             data->opt |= REQUEST;
         else
             data->opt |= REPLY;
+		if (argc == 7)
+			data->opt |= VERBOSE;
 	}
 	else if (argc != 5)
 	    error("Usage: ./ft_malcolm <source ip> <source MAC addr> <target ip> <target MAC addr>", -1, TRUE);

@@ -41,7 +41,6 @@ int    print_data(t_arp_packet *ah, struct ethhdr *eh)
 {
 	struct sockaddr_in addrSender = {0};
 	struct sockaddr_in addrTarget = {0};
-	(void)eh;
 
 	addrSender.sin_addr.s_addr = ah->arp_spa;
 	addrSender.sin_family = AF_INET;
