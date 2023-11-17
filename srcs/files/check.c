@@ -10,11 +10,13 @@ static int is_valid_ip(char **ip, t_data *data)
 	char    *target = ip[3];
 	if (BONUS == TRUE)
 	{
+		// Do source
 		if (ft_strnstr(source, ".", ft_strlen(source)) == NULL)
 		{
 			char    *test = ft_itoa(ft_atoi(source));
 			if (!ft_strcmp(test, source))
 			{
+				data->source.sin_family = AF_INET;
 				data->source.sin_addr.s_addr = htonl((uint32_t)ft_atoi(source));
 				free(test);
 			}
@@ -26,11 +28,13 @@ static int is_valid_ip(char **ip, t_data *data)
 			if (inet_pton(AF_INET, source, &data->source.sin_addr) != 1)
 				return (0);
 		}
+		// Do target
 		if (ft_strnstr(target, ".", ft_strlen(target)) == NULL)
 		{
 			char    *test = ft_itoa(ft_atoi(target));
 			if (!ft_strcmp(test, target))
 			{
+				data->target.sin_family = AF_INET;
 				data->target.sin_addr.s_addr = htonl((uint32_t)ft_atoi(target));
 				free(test);
 			}

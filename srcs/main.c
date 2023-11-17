@@ -78,7 +78,9 @@ int main(int argc, char **argv)
 				&& arp_request->arp_spa == data.target.sin_addr.s_addr
 				&& arp_request->arp_dpa == data.source.sin_addr.s_addr)
 			{
-				printf("ARP request received\nwho has %s, tell %s\n", inet_ntoa(data.source.sin_addr), inet_ntoa(data.target.sin_addr));
+				printf("ARP request received\n");
+				printf(YELLOW"Who has %s?", inet_ntoa(data.source.sin_addr));
+				printf(" tell %s\n"RESET, inet_ntoa(data.target.sin_addr));
 				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
 				break ;
 			}
