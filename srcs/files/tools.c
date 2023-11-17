@@ -66,20 +66,24 @@ int    print_data(t_arp_packet *ah, struct ethhdr *eh)
 	       ah->arp_dha[3],
 	       ah->arp_dha[4],
 	       ah->arp_dha[5]);
-	printf("SENDER IP address: %s\n", inet_ntoa(addrTarget.sin_addr));
-//	printf("ETHER DST MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
-//	       eh->h_dest[0],
-//	       eh->h_dest[1],
-//	       eh->h_dest[2],
-//	       eh->h_dest[3],
-//	       eh->h_dest[4],
-//	       eh->h_dest[5]);
-//	printf("ETHER SRC MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
-//	       eh->h_source[0],
-//	       eh->h_source[1],
-//	       eh->h_source[2],
-//	       eh->h_source[3],
-//	       eh->h_source[4],
-//	       eh->h_source[5]);
+	printf("TARGET IP address: %s\n", inet_ntoa(addrTarget.sin_addr));
+	if (eh)
+	{
+		printf("---ETHER HEADER INFORMATION:---\n");
+		printf("ETHER DST MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+		       eh->h_dest[0],
+		       eh->h_dest[1],
+		       eh->h_dest[2],
+		       eh->h_dest[3],
+		       eh->h_dest[4],
+		       eh->h_dest[5]);
+		printf("ETHER SRC MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+		       eh->h_source[0],
+		       eh->h_source[1],
+		       eh->h_source[2],
+		       eh->h_source[3],
+		       eh->h_source[4],
+		       eh->h_source[5]);
+	}
 	return (1);
 }

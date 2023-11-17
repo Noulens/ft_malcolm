@@ -52,9 +52,9 @@ typedef struct __attribute__((packed)) s_arp_packet
 
 typedef enum e_type_of_attack
 {
-    REPLY = 10,
-    REQUEST = 100,
-    VERBOSE = 1000
+    REPLY = 0b00000001,
+    REQUEST = 0b00000010,
+    VERBOSE = 0b00000100,
 }   t_type_of_attack;
 
 typedef struct s_data
