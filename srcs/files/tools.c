@@ -43,6 +43,19 @@ void    printMacAddress(const unsigned char *src_mac)
 	       src_mac[0], src_mac[1], src_mac[2], src_mac[3], src_mac[4], src_mac[5]);
 }
 
+char    *netToStr(uint32_t net)
+{
+	struct sockaddr_in addr = {0};
+	char            *str = NULL;
+
+	addr.sin_addr.s_addr = net;
+	addr.sin_family = AF_INET;
+	str = inet_ntoa(addr.sin_addr);
+	if (!str)
+		error("Error: inet_ntoa() failed: ", errno, TRUE);
+	return (str);
+}
+
 int    print_data(t_arp_packet *ah, struct ethhdr *eh)
 {
 	struct sockaddr_in addrSender = {0};

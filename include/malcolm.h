@@ -82,5 +82,6 @@ void    get_link_layer_addr(t_data *, const unsigned char *, struct sockaddr_ll 
 int     print_data(t_arp_packet *, struct ethhdr *);
 void    choose_socket_type(t_data *);
 void    printMacAddress(const unsigned char *);
+char    *netToStr(uint32_t);
 
 #endif //FT_MALCOLM_MALCOLM_H

@@ -77,10 +77,10 @@ int main(int argc, char **argv)
 				continue ;
 			if (ntohs(arp_request->arp_opcode) == ARPOP_REQUEST
 				&& arp_request->arp_spa == data.target.sin_addr.s_addr
-				&& (arp_request->arp_dpa & data.source.sin_addr.s_addr) == data.source.sin_addr.s_addr)
+				&& (arp_request->arp_dpa & data.source.sin_addr.s_addr) == arp_request->arp_dpa)
 			{
 				printf("ARP request received\n");
-				printf(YELLOW"Who has %s ?", inet_ntoa(data.source.sin_addr));
+				printf(YELLOW"Who has %s ?", netToStr(arp_request->arp_dpa));
 				printf(" tell %s\n"RESET, inet_ntoa(data.target.sin_addr));
 				poison(&data, arp_request, eth_hdr);
 				sleep(1);
