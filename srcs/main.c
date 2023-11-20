@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	choose_socket_type(&data);
 	interface(&data);
 	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
-    printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
+	printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
 	if (BONUS == TRUE && (data.opt & REQUEST))
 	{
 		build_arp_request(&data, &req);
