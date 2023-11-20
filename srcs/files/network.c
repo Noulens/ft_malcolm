@@ -77,28 +77,6 @@ void    interface(t_data *data)
 	printMacAddress(data->my_mac);
 }
 
-int getHost(t_data *data)
-{
-	char hostnameSource[NI_MAXHOST];
-	char hostnameTarget[NI_MAXHOST];
-
-	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
-	if (codeS != 0)
-	{
-		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeS));
-		ft_memcpy(hostnameSource, "Unknown", 8);
-	}
-	printf("Hostname of source: %s\n", hostnameSource);
-	int codeT = getnameinfo((const struct sockaddr *)(&(*data).target), sizeof((*data).target), hostnameTarget, NI_MAXHOST, NULL, 0, 0);
-	if (codeT != 0)
-	{
-		fprintf(stderr, "getnameinfo failed: %s\n", gai_strerror(codeT));
-		ft_memcpy(hostnameTarget, "Unknown", 8);
-	}
-	printf("Hostname of target: %s\n", hostnameTarget);
-	return (0);
-}
-
 void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr)
 {
 	(*addr).sll_family = AF_PACKET;

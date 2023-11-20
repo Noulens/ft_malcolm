@@ -83,10 +83,4 @@ int     print_data(t_arp_packet *, struct ethhdr *);
 void    choose_socket_type(t_data *);
 void    printMacAddress(const unsigned char *);
 
-/*
- * BONUS
- */
-int     getHost(t_data *);
-int     getEthernetInterface(char ***);
-
 #endif //FT_MALCOLM_MALCOLM_H

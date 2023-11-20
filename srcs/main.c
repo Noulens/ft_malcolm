@@ -42,7 +42,6 @@ int main(int argc, char **argv)
 	signal_handling();
 	init_checks(argc, argv, &data);
 	choose_socket_type(&data);
-	(void)((data.opt & VERBOSE) && getHost(&data));
 	interface(&data);
 	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
