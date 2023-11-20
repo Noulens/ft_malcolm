@@ -86,7 +86,7 @@ void    printMacAddress(const unsigned char *);
 /*
  * BONUS
  */
-void    getHost(t_data *);
+int     getHost(t_data *);
 int     getEthernetInterface(char ***);
 
 #endif //FT_MALCOLM_MALCOLM_H

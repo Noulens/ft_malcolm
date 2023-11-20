@@ -77,13 +77,11 @@ void    interface(t_data *data)
 	printMacAddress(data->my_mac);
 }
 
-void    getHost(t_data *data)
+int getHost(t_data *data)
 {
 	char hostnameSource[NI_MAXHOST];
 	char hostnameTarget[NI_MAXHOST];
 
-    data->opt |= VERBOSE;
-	interface(data);
 	int codeS = getnameinfo((const struct sockaddr *)(&(*data).source), sizeof((*data).source), hostnameSource, NI_MAXHOST, NULL, 0, 0);
 	if (codeS != 0)
 	{
@@ -98,6 +96,7 @@ void    getHost(t_data *data)
 		ft_memcpy(hostnameTarget, "Unknown", 8);
 	}
 	printf("Hostname of target: %s\n", hostnameTarget);
+	return (0);
 }
 
 void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr)
