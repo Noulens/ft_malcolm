@@ -22,6 +22,25 @@ void    choose_socket_type(t_data *data)
 	}
 }
 
+void my_mac (unsigned char *addr, int ifindex)
+{
+	struct ifaddrs *ifaddr;
+	struct ifaddrs *ifa;
+
+	getifaddrs(&ifaddr);
+	ifa = ifaddr;
+	while (ifa && ((struct sockaddr_ll *)ifa->ifa_addr)->sll_ifindex != ifindex)
+		ifa = ifa->ifa_next;
+    if (((struct sockaddr_ll *)ifa->ifa_addr)->sll_halen != 6)
+	{
+        ft_bzero(addr, ETH_ALEN);
+        error("Your interface has no valid MAC address, using source's", -1, FALSE);
+    }
+	else
+		ft_memcpy(addr, ((struct sockaddr_ll *)ifa->ifa_addr)->sll_addr, 6);
+	freeifaddrs(ifaddr);
+}
+
 void    interface(t_data *data)
 {
 	struct ifaddrs *ifap;
@@ -36,46 +55,26 @@ void    interface(t_data *data)
 		{
 			sa = (struct sockaddr_in *)ifa->ifa_addr;
 			addr = inet_ntoa(sa->sin_addr);
-			printf("Interface: %s\n\tAddress: %s index: %d\n", ifa->ifa_name, addr, if_nametoindex(ifa->ifa_name));
+			(void)((data->opt & VERBOSE) && printf("Interface: %s\n\tAddress: %s index: %d\n", ifa->ifa_name, addr, if_nametoindex(ifa->ifa_name)));
             if (!ft_strncmp(ifa->ifa_name, "eth", 3) || !ft_strncmp(ifa->ifa_name, "enp", 3) || !ft_strncmp(ifa->ifa_name, "ens", 3))
             {
                 data->interface_index = if_nametoindex(ifa->ifa_name);
                 ft_memcpy(data->interface, ifa->ifa_name, ft_strlen(ifa->ifa_name) + 1);
-            }
-			if (ifa->ifa_broadaddr)
+			}
+			if (ifa->ifa_broadaddr && (data->opt & VERBOSE))
 			{
 				sa = (struct sockaddr_in *)ifa->ifa_broadaddr;
 				addr = inet_ntoa(sa->sin_addr);
 				printf("\tBroadcast: %s\n", addr);
 			}
-			else
+			else if ((data->opt & VERBOSE))
 				printf("\tNo broadcast address\n");
-			if (BONUS == TRUE)
-				getMacAddress(ifa->ifa_name, g_packet_socket);
 		}
 	}
 	ft_putchar_fd('\n', 1);
 	freeifaddrs(ifap);
-}
-
-void    getMacAddress(const char *interfaceName, int sockfd)
-{
-	struct ifreq ifr = {};
-	char    mac[18];
-
-	ft_memset(&ifr, 0, sizeof(ifr));
-	ft_memset(mac, 0, sizeof(mac));
-	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", interfaceName);
-	if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) <= -1)
-		error("ioctl", errno, FALSE);
-	printf("\tMAC Address of %s: %02X:%02X:%02X:%02X:%02X:%02X\n",
-	       interfaceName,
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[0],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[1],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[2],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[3],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[4],
-	       (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
+	my_mac(data->my_mac, data->interface_index);
+	printMacAddress(data->my_mac);
 }
 
 void    getHost(t_data *data)

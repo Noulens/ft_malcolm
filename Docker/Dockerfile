@@ -17,6 +17,6 @@ RUN	        apt update && \
 
 WORKDIR     ./ft_malcolm/
 
-COPY        .. .
+COPY        . .
 
 

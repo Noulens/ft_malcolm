@@ -37,6 +37,12 @@ void    welcome()
 	printf(GREEN"            A basic ARP poisoning program\n\n"RESET);
 }
 
+void    printMacAddress(const unsigned char *src_mac)
+{
+	printf("Your MAC address is: %02X:%02X:%02X:%02X:%02X:%02X\n",
+	       src_mac[0], src_mac[1], src_mac[2], src_mac[3], src_mac[4], src_mac[5]);
+}
+
 int    print_data(t_arp_packet *ah, struct ethhdr *eh)
 {
 	struct sockaddr_in addrSender = {0};

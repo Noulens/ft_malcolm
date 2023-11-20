@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 	signal_handling();
 	init_checks(argc, argv, &data);
 	choose_socket_type(&data);
+	printf("%d\n", g_packet_socket);
 	interface(&data);
 	get_link_layer_addr(&data, ether_broadcast_addr, &addr);
     printf("Using interface: %s of index: %d\n", data.interface, addr.sll_ifindex);
@@ -64,7 +65,7 @@ int main(int argc, char **argv)
 		else
 		{
 			if (recvfrom(g_packet_socket, buffer, MAX_BUF, 0, (struct sockaddr *)&addr, &addr_len) == -1)
-				error("recvfrom() failed", errno, FALSE);
+				error("recvfrom() failed", errno, TRUE);
 			struct ethhdr *eth_hdr = (struct ethhdr *)buffer;
 			if (ntohs(eth_hdr->h_proto) == ETH_P_ARP)
 				printf("ARP packet incoming...\n");
@@ -73,20 +74,21 @@ int main(int argc, char **argv)
 			t_arp_packet *arp_request = (t_arp_packet *)(buffer + ETHER_HDR_LEN);
 			if (ntohs(arp_request->arp_opcode) == ARPOP_REQUEST
 				&& arp_request->arp_spa == data.target.sin_addr.s_addr
-				&& arp_request->arp_dpa == data.source.sin_addr.s_addr)
+				&& (arp_request->arp_dpa & data.source.sin_addr.s_addr))
 			{
 				printf("ARP request received\n");
 				printf(YELLOW"Who has %s ?", inet_ntoa(data.source.sin_addr));
 				printf(" tell %s\n"RESET, inet_ntoa(data.target.sin_addr));
 				(void)((data.opt & VERBOSE) && print_data(arp_request, eth_hdr));
+				poison(&data, arp_request, eth_hdr);
+				if (sendto(g_packet_socket, &buffer, sizeof(buffer), 0, (struct sockaddr *)&data.target.sin_addr, sizeof(data.target.sin_addr)) == -1)
+					error("sendto() failed", errno, TRUE);
 				break ;
 			}
 			else
 				continue ;
 		}
 	}
-	// todo: edit packet here
-	poison(&data);
 	if (close(g_packet_socket) == -1)
 		error("Error: close() failed: ", errno, TRUE);
 	g_packet_socket = -1;

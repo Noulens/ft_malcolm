@@ -66,25 +66,26 @@ typedef struct s_data
     int                 opt;
     char                interface[IFNAMSIZ];
     unsigned int        interface_index;
+	uint8_t             my_mac[ETH_ALEN];
 }	t_data;
 
 extern int  g_packet_socket;
 
 void	init_checks(int, char **, t_data *);
 int		check_hex(char *);
-void	poison(void *);
+void	poison(t_data *, t_arp_packet *, struct ethhdr *);
 void	welcome();
 void	error(const char *, int, int);
 void    interface(t_data *);
-void    build_arp_request(t_data *data, t_arp_packet *req);
-void    get_link_layer_addr(t_data *data, const unsigned char *ether_broadcast_addr, struct sockaddr_ll *addr);
-int     print_data(t_arp_packet *ah, struct ethhdr *eh);
-void    choose_socket_type(t_data *data);
+void    build_arp_request(t_data *, t_arp_packet *);
+void    get_link_layer_addr(t_data *, const unsigned char *, struct sockaddr_ll *);
+int     print_data(t_arp_packet *, struct ethhdr *);
+void    choose_socket_type(t_data *);
+void    printMacAddress(const unsigned char *);
 
 /*
  * BONUS
  */
-void	getMacAddress(const char *, int);
 void    getHost(t_data *);
 int     getEthernetInterface(char ***);
 
