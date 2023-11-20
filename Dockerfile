@@ -19,4 +19,4 @@ WORKDIR     ./ft_malcolm/
 
 COPY        . .
 
-
+RUN        make

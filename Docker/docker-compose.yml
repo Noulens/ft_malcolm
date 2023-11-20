@@ -3,7 +3,7 @@ version: '3.5'
 services:
   attacker:
     container_name: attacker
-    build: .
+    build: ..
     restart: on-failure
     networks:
       - mynetwork
